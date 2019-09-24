@@ -4,18 +4,16 @@ import http
 import http.client
 import sys
 import json
-from escpos.printer import Serial
+
 from gpiozero import Button
 from datetime import datetime
 from typing import NamedTuple, List
 from colorama import Fore, Style
 
-API_HOST = 'api.flipdot.org'
-API_PREFIX = '/sensors/'
-DB_SENSOR_TYPE = 'beverage_consumption'
+from config import printer, API_HOST, API_PREFIX, DB_SENSOR_TYPE
 
 
-def log(message: str) -> None:
+def log(message: str = None) -> None:
     if message is None:
         print()
     else:
@@ -58,10 +56,10 @@ def print_order_to_stdout(beverage: Beverage) -> None:
 
 def print_order_to_thermal(beverage: Beverage) -> None:
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    printer.text(timestamp)
-    printer.text(beverage.display_name)
-    printer.text('----------------')
-    printer.text()
+    printer.textln(timestamp)
+    printer.textln(beverage.display_name)
+    printer.textln('--------------------------------')
+    printer.flush()
 
 
 ORDER_HANDLERS = (
@@ -83,7 +81,6 @@ button_mapping = {
 }
 
 connection = None
-printer = None
 
 def request(method: str, path: str, body = None, blocking = True):
     assert connection is not None
@@ -102,16 +99,11 @@ def request(method: str, path: str, body = None, blocking = True):
 
 def main() -> None:
     global connection
-    global printer
 
     log('🚀 Welcome to the BOC counter!')
-    log('')
+    log()
     log('🤔 Connecting to server...')
     connection = http.client.HTTPConnection(API_HOST, timeout=9001 * 9001)
-    log('😗 Connected!')
-
-    log('🤔 Connecting to printer...')
-    printer = Serial('/dev/ttyUSB0')
     log('😗 Connected!')
 
     log('🔥 Requesting current beverage data...')
