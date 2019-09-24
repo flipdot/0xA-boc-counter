@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import NamedTuple, List
 from colorama import Fore, Style
 
-from config import printer, API_HOST, API_PREFIX, DB_SENSOR_TYPE, STATS_URL, PRINTER_CHAR_WIDTH, BANNER_FREQUENCY
+from config import printer, API_HOST, API_PREFIX, DB_SENSOR_TYPE, STATS_URL, PRINTER_CHAR_WIDTH, BANNER_FREQUENCY, QR_CODE_SIZE
 
 banner_counter = 0
 
@@ -63,7 +63,7 @@ def print_order_to_thermal(beverage: Beverage) -> None:
     printer.text(beverage.display_name + '\n')
     printer.text('-' * PRINTER_CHAR_WIDTH + '\n')
     if banner_counter == 0:
-        printer.qr(STATS_URL, size=16)
+        printer.qr(STATS_URL, size=QR_CODE_SIZE)
 
     banner_counter += 1
     banner_counter %= BANNER_FREQUENCY
