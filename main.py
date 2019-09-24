@@ -56,6 +56,8 @@ def print_order_to_stdout(beverage: Beverage) -> None:
 
 
 def print_order_to_thermal(beverage: Beverage) -> None:
+    global banner_counter
+
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     printer.text(timestamp + '\n')
     printer.text(beverage.display_name + '\n')
