@@ -1,0 +1,6 @@
+requests
+RPi.GPIO
+gpiozero
+python-escpos
+colorama
+paramiko
