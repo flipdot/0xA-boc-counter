@@ -10,8 +10,9 @@ from datetime import datetime
 from typing import NamedTuple, List
 from colorama import Fore, Style
 
-from config import printer, API_HOST, API_PREFIX, DB_SENSOR_TYPE
+from config import printer, API_HOST, API_PREFIX, DB_SENSOR_TYPE, STATS_URL, PRINTER_CHAR_WIDTH, BANNER_FREQUENCY
 
+banner_counter = 0
 
 def log(message: str = None) -> None:
     if message is None:
@@ -56,9 +57,14 @@ def print_order_to_stdout(beverage: Beverage) -> None:
 
 def print_order_to_thermal(beverage: Beverage) -> None:
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    printer.textln(timestamp)
-    printer.textln(beverage.display_name)
-    printer.textln('--------------------------------')
+    printer.text(timestamp + '\n')
+    printer.text(beverage.display_name + '\n')
+    printer.text('-' * PRINTER_CHAR_WIDTH + '\n')
+    if banner_counter == 0:
+        printer.qr(STATS_URL, size=16)
+
+    banner_counter += 1
+    banner_counter %= BANNER_FREQUENCY
     printer.flush()
 
 
