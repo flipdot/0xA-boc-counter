@@ -82,10 +82,11 @@ current_value_map = {}
 button_mapping = {
     (Button(2), Beverage('club_mate', 'Club Mate')),
     (Button(3), Beverage('mio_mate', 'Mio Mio Mate')),
-    (Button(4), Beverage('flora_mate', 'Flora Mate')),
+    (Button(4), Beverage('mio_cola', 'Mio Mio Cola')),
     (Button(17), Beverage('tschunk', 'Tschunk')),
-    # (Button(27), Beverage('tschunk_slush', 'Tschunk Slush')),
-    # (Button(22), Beverage('beer', 'Bier')),
+    (Button(27), Beverage('beer', 'Bier')),
+    (Button(22), Beverage('water', 'Wasser')),
+    (Button(10), Beverage('special_drink', 'Sonderanfertigung')),
 }
 
 connection = None
