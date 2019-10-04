@@ -92,10 +92,8 @@ button_mapping = {
     (Button(10), Beverage('special_drink', 'Sonderanfertigung')),
 }
 
-connection = None
-
 def request(method: str, path: str, body = None, blocking = True):
-    assert connection is not None
+    connection = http.client.HTTPConnection(API_HOST, timeout=9001 * 9001)
     connection.request(
         method.upper(),
         path,
@@ -109,15 +107,9 @@ def request(method: str, path: str, body = None, blocking = True):
     return None
 
 def main() -> None:
-    global connection
-
     log('🚀 Welcome to the BOC counter!')
     log()
-    log('🤔 Connecting to server...')
-    connection = http.client.HTTPConnection(API_HOST, timeout=9001 * 9001)
-    log('😗 Connected!')
-
-    log('🔥 Requesting current beverage data...')
+    log('🤔 Requesting current beverage data...')
     res = request('get', '/')
     if res.code != 200:
         log('☹️ SpaceAPI returned error')
