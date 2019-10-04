@@ -93,7 +93,7 @@ button_mapping = {
 }
 
 def request(method: str, path: str, body = None, blocking = True):
-    connection = http.client.HTTPConnection(API_HOST, timeout=9001 * 9001)
+    connection = http.client.HTTPConnection(API_HOST, timeout=9001)
     connection.request(
         method.upper(),
         path,
