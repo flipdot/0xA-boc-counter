@@ -13,6 +13,8 @@ from colorama import Fore, Style
 from config import printer, API_HOST, API_PREFIX, DB_SENSOR_TYPE, STATS_URL, PRINTER_CHAR_WIDTH, BANNER_FREQUENCY, QR_CODE_SIZE
 
 banner_counter = 0
+current_value_map = {}
+
 
 def log(message: str = None) -> None:
     if message is None:
@@ -26,19 +28,20 @@ class Beverage(NamedTuple):
     display_name: str
 
     def increment_counter(self) -> None:
+        last_value = current_value_map[self.id]
+        new_value = last_value + 1
+
         for handler in ORDER_HANDLERS:
             try:
-                handler(self)
+                handler(self, new_value)
             except KeyboardInterrupt:
                 sys.exit()
             except Exception as e:
                 print(e)
+            current_value_map[self.id] = new_value
 
 
-def publish_order_to_db(beverage: Beverage) -> None:
-    last_value = current_value_map[beverage.id]
-    new_value = last_value + 1
-
+def publish_order_to_db(beverage: Beverage, new_value: int) -> None:
     res = request('put', API_PREFIX, body=[
         {
             'SensorType': DB_SENSOR_TYPE,
@@ -48,14 +51,13 @@ def publish_order_to_db(beverage: Beverage) -> None:
             'Description': beverage.display_name,
         },
     ])
-    current_value_map[beverage.id] = new_value
 
 
-def print_order_to_stdout(beverage: Beverage) -> None:
-    log(f'🍻 {beverage.display_name}')
+def print_order_to_stdout(beverage: Beverage, new_value: int) -> None:
+    log(f'🍻 {beverage.display_name} (now {new_value})')
 
 
-def print_order_to_thermal(beverage: Beverage) -> None:
+def print_order_to_thermal(beverage: Beverage, new_value: int) -> None:
     if printer is None:
         return
 
@@ -63,7 +65,7 @@ def print_order_to_thermal(beverage: Beverage) -> None:
 
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     printer.text(timestamp + '\n')
-    printer.text(beverage.display_name + '\n')
+    printer.text(beverage.display_name + ' #'  + str(new_value) +  '\n')
     printer.text('-' * PRINTER_CHAR_WIDTH + '\n')
     if banner_counter == 0:
         printer.qr(STATS_URL, size=QR_CODE_SIZE)
@@ -78,8 +80,6 @@ ORDER_HANDLERS = (
     print_order_to_thermal,
     publish_order_to_db,
 )
-
-current_value_map = {}
 
 # Pinout: https://gpiozero.readthedocs.io/en/stable/_images/pin_layout.svg
 button_mapping = {
