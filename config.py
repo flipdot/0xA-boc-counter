@@ -9,4 +9,4 @@ DB_SENSOR_TYPE = 'beverage_consumption'
 STATS_URL = 'https://stats.flipdot.org/d/-wCfcYtZz/0xa-drinks-consumption'
 
 BANNER_FREQUENCY = 20
-QR_CODE_SIZE = 12
+QR_CODE_SIZE = 11

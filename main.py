@@ -56,6 +56,9 @@ def print_order_to_stdout(beverage: Beverage) -> None:
 
 
 def print_order_to_thermal(beverage: Beverage) -> None:
+    if printer is None:
+        return
+
     global banner_counter
 
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -101,7 +104,6 @@ def request(method: str, path: str, body = None, blocking = True):
             'Content-Type':  'application/json',
         },
     )
-    # connection.send(body)
     if blocking:
         return connection.getresponse()
     return None
